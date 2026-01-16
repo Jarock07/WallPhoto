@@ -735,6 +735,54 @@ sudo chown -R www-data:www-data /var/www/project1.local/storage
 sudo chmod -R 775 /var/www/project1.local/storage
 ```
 
+### Lỗi Missing App Key
+Nếu gặp lỗi `RuntimeException` liên quan đến `EncryptionServiceProvider`:
+```
+RuntimeException: No application encryption key has been specified.
+```
+**Cách fix:**
+```bash
+# Chạy lệnh sau để sinh key mới
+php artisan key:generate
+
+# Sau đó clear cache
+php artisan config:clear
+```
+
+### Lỗi Table sessions doesn't exist
+Lỗi `QueryException`: `Table 'project1_db.sessions' doesn't exist`.
+Do cấu hình `SESSION_DRIVER=database` nhưng chưa tạo bảng.
+
+**Cách fix 1 (Đổi về file):**
+Sửa file `.env`:
+```env
+SESSION_DRIVER=file
+```
+
+**Cách fix 2 (Tạo bảng - Khuyên dùng):**
+```bash
+php artisan session:table
+php artisan migrate
+```
+
+### Lỗi Table already exists
+Khi chạy `php artisan migrate` gặp lỗi `Base table or view already exists: 1050 Table 'submissions' already exists`.
+Nguyên nhân: Đã import database thủ công nhưng thiếu lịch sử migration.
+
+**Cách fix (Reset database):**
+Lưu ý: Lệnh này sẽ xóa hết dữ liệu cũ!
+```bash
+php artisan migrate:fresh
+```
+
+**Cách fix (Giữ dữ liệu):**
+Tạm thời đổi tên file migration gây lỗi, chạy migrate, rồi đổi lại tên:
+```bash
+mv database/migrations/xxxx_create_submissions_table.php database/migrations/xxxx_create_submissions_table.php.bak
+php artisan migrate
+mv database/migrations/xxxx_create_submissions_table.php.bak database/migrations/xxxx_create_submissions_table.php
+```
+
 ### Clear cache Laravel
 ```bash
 cd /var/www/project1.local
