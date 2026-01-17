@@ -652,7 +652,7 @@
         <h2>Welcome to Photo Wall</h2>
         <p>No photos shared yet. Be the first one!</p>
         <div class="qr-box">
-            Scan QR or visit /form
+            <img src="/images/qr-code.png" alt="Scan QR" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">
         </div>
     </div>
     @endif
